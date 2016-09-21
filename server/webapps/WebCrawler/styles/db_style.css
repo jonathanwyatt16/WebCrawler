@@ -1,0 +1,258 @@
+/* Styles for database query page. */
+
+html, body {
+	font-family: Verdana, 'Lucida Grande';
+	margin: 0px;
+	padding: 0px;
+}
+
+
+/* Styles for hidden content. */
+
+.modal {
+	background-color: rgba(0,0,0,0.4);
+	display: none;
+	height: 100%;
+	left: 0;
+	max-height: 100%;
+	overflow: hidden;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 2;
+}
+
+.modal-container {
+	background-color: #fefefe;
+	border: 1px solid black;
+	display: none;
+	margin: 20px;
+	max-height: 95%;
+	max-width: 100%;	
+	overflow-x: visible;
+	overflow-y: scroll;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+}
+
+#pop-up-message-modal-container {
+	display: none;
+	margin-left: 200px;
+	margin-right: 200px;
+	margin-top: 100px;
+	text-align: center;
+}
+
+.modal-close-button {
+	border: none;
+	color: #aaaaaa;
+	font-size: 18px;
+	font-weight: bold;
+	overflow: hidden;
+	position: fixed;
+	right: 42px;
+}
+
+#pop-up-message-close-button {
+	position: fixed;
+	right: 222px;
+}
+
+.modal-close-button:hover,
+.modal-close-button:focus {
+	color: #000;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+
+/* Styles for top menu. */
+
+#top-menu {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+ul {
+	background-color: #333;
+	list-style-type: none;
+	margin: 0;
+	overflow: hidden;
+	padding: 0;
+}
+
+h2 {
+	color: white;
+	line-height: 20%;
+	padding-left: 40px;
+	padding-right: 30px;
+}
+
+#view-schema { cursor: pointer; }
+
+li {
+	float: left;
+	max-height: 95%;
+	vertical-align: bottom;
+}
+
+li a, .dropdown-header {
+	color: white;
+	cursor: pointer;
+	display: inline-block;
+	padding: 14px 16px;
+	text-align: center;
+	text-decoration: none;
+}
+
+li a:hover, .dropdown-column:hover .dropdown-header {
+	background-color: LightGrey;
+	color: black;
+}
+
+li.dropdown-column {
+	display: inline-block;
+	z-index: 1;
+}
+
+.dropdown-content {
+	background-color: #f9f9f9;
+	border: 1px solid black;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	display: none;
+	min-width: 160px;
+	position: absolute;
+	z-index: 1;
+}
+
+.dropdown-content a {
+	color: black;
+	cursor: pointer;
+	display: block;
+	font-size: 12px;
+	line-height: 0px;
+	padding: 12px 16px;
+	text-align: left;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap; 
+	word-wrap: break-word;
+}
+
+.dropdown-column:hover .dropdown-content {	
+	display: block;
+}
+
+.second-level-dropdown-content {
+	background-color: #f9f9f9;
+	border: 1px solid black;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	display: none;
+	margin-left: 144px;
+	margin-top: -13px;
+	min-width: 160px;
+	position: absolute;
+	z-index: 1;
+}
+
+.second-level-dropdown-column:hover .second-level-dropdown-content { 
+	display: block;
+}
+
+
+/* Styles for aligned content. */
+
+#aligned-content { 
+	background-color: white;
+	padding-left: 1%;
+	padding-right: 1%;
+	width: 98%;
+	z-index: -1;
+}
+
+button {
+	background-color: #333;
+	border: 1px solid black;
+	color: white;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 16px;
+	margin-bottom: 6px;
+	padding: 5px 10px;
+	text-align: center;
+	text-decoration: none;
+}
+
+button:active {
+	background-color: LightGrey;
+	color: black;
+}
+
+#latest-crawl {
+	display: inline-block;
+	font-size:14px;
+	font-style: italic;
+	line-height: 0px;
+	padding-left: 10px;
+}
+
+.ui-wrapper {
+	border: none;
+	margin-bottom: -11px;
+	z-index: 0;
+}
+
+#query-input-container {
+	border: 1px solid black;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+#query-input {
+	border: none;
+	color: black;
+	font-family: "Courier";
+	font-size: 12px;
+	height: 100px;
+	min-height: 10px;
+	padding-bottom: 0px;
+	width: 100%;
+	z-index: -1;
+}
+
+#query-results-container {
+	visibility: hidden;
+	width: 100%;
+}
+
+#query-column-headers-container { overflow: hidden; }
+
+th {
+	border: 1px solid black;
+	text-align: left;
+}
+
+#query-column-headers-spacing {
+	border: none;
+	color: white;
+}
+
+#query-values-scrollbox {
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+td, tr {
+	border: 1px solid black;
+	font-size: 14px;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap; 
+}
+
+.query-value-row:hover {background-color: LightGrey}

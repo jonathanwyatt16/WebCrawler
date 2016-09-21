@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<link rel="icon" href="./images/db_favicon.ico">
+	
+	<link rel="stylesheet" href="./styles/jquery-ui.css">
+	<link rel="stylesheet" href="./styles/db_style.css">
+	
+	<script src="./scripts/jquery-3.1.0.min.js"></script>
+	<script src="./scripts/jquery-ui.js"></script>
+	<script src="./scripts/db_script.js"></script>
+</head> 
+
+<title>Jira DB</title>
+
+<body onload="loadPage()">
+
+	<div id="modal-background" class="modal">
+		<div id="db-schema-modal-container" class="modal-container">
+			<span id="db-schema-close-button" class="modal-close-button">X</span>
+			<p id="db-schema-content" class="modal-content"></p>
+		</div>
+		
+		<div id="pop-up-message-modal-container" class="modal-container">
+			<span id="pop-up-message-close-button" class="modal-close-button">X</span>
+			<p id="pop-up-message-content" class="modal-content"></p>
+		</div>	
+	</div>
+
+	<div id="top-menu">
+		<ul>
+			<li><h2>Jira DB</h2></li>
+			
+			<li><a id="view-schema">View Schema</a></li>
+			
+			<li class="dropdown-column">
+				<a class="dropdown-header">Saved Queries</a>
+				<div id="saved-queries-content" class="dropdown-content"></div>
+			</li>
+			
+			<li class="dropdown-column">
+				<a class="dropdown-header">Reports</a>
+				<div id="reports-content" class="dropdown-content"></div>
+			</li>
+		</ul>
+	</div>
+
+	<div id="aligned-content">
+		<div id="query-input-container">
+			<textarea id="query-input" autofocus></textarea>
+		</div>
+		
+		<button id="query-submit-button">Submit</button>
+		<p id="latest-crawl"></p>
+			
+		<div id="query-results-container">
+			<div id="query-column-headers-container">
+				<table id="query-column-headers"></table>
+			</div>
+					
+			<div id="query-values-scrollbox">
+				<div id="query-values-container">
+					<table id="query-values"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

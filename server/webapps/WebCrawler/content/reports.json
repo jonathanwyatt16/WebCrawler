@@ -1,0 +1,212 @@
+[	
+	{	
+		"report_name" : "CUS Report",
+		"report_tabs" : 
+			[				
+				{
+					"tab_name" : "Updates From Today",
+					"tab_queries" : 
+						[
+							{
+								"query_name" : "All comments and work logs on CUS tickets today",
+								"query_value" : "--All comments and work logs on CUS tickets today\nselect tKey as 'Ticket Key', tTitle as 'Ticket Title', assignee.eFullName as 'Assignee', commenter.eFullName as 'Commenter', ROUND(DATEDIFF(MINUTE, PostDate, GETDATE()) / 60.0, 2) as 'Hours Ago', PostTime as 'Min', PostComment as 'Comment' from JiraEmployee commenter\ninner join (select comTicketId as 'PostTicketId', comEmployeeId as 'PostEmployeeId', comDate as 'PostDate', comComment as 'PostComment', -1 as 'PostTime' from JiraTicketComment\nunion select wlTicketId, wlEmployeeId, wlDate, wlComment, wlMinutes from JiraTicketWorkLog) posts on commenter.eId = PostEmployeeId\ninner join JiraTicket on tId = postTicketId\ninner join JiraEmployee assignee on tAssigneeId = assignee.eId\ninner join JiraProject on pId = tProjectId\nwhere pAbbrev = 'CUS' and DATEDIFF(DAY, PostDate, GETDATE()) = 0\norder by PostDate desc"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Most Recent Comments",
+					"tab_queries" :
+						[
+							{
+								"query_name" : "Most recent comment on open CUS tickets",
+								"query_value" : "--Most recent comment on open CUS tickets\nselect tKey as 'Key', tTitle as 'Ticket Title', assignee.eFullName as 'Assignee', commenter.eFullName as 'Commenter', \nDATEDIFF(DAY, comVal.comDate, GETDATE()) as 'Days Ago', comVal.comComment as 'Comment' from JiraTicketComment comVal \ninner join (select comTicketId, max(comId) as 'maxComId' from JiraTicketComment\ninner join JiraTicket on tId = comTicketId\ngroup by comTicketId) maxCom\non comVal.comId = maxCom.maxComId\ninner join JiraTicket on comVal.comTicketId = tId\ninner join JiraProject on tProjectId = pId\ninner join JiraEmployee commenter on comVal.comEmployeeId = commenter.eId\ninner join JiraEmployee assignee on tAssigneeId = assignee.eId\nwhere pAbbrev = 'CUS' and tStatus in ('Open', 'Reopened', 'In Progress')\norder by 'Days Ago'"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Most Recent Work Logs",
+					"tab_queries" :
+						[
+							{
+								"query_name" : "Most recent work log on open CUS tickets",
+								"query_value" : "--Most recent work log on open CUS tickets\nselect tKey as 'Key', tTitle as 'Ticket Title', assignee.eFullName as 'Assignee', logger.eFullName as 'Work Logger', DATEDIFF(DAY, wlVal.wlDate, GETDATE()) as 'Days Ago', wlVal.wlMinutes as 'Minutes', wlVal.wlComment as 'Work Log Comment' from JiraTicketWorkLog wlVal inner join\n(select wlTicketId, max(wlId) as 'maxWlId' from JiraTicketWorkLog\ninner join JiraTicket on tId = wlTicketId\ngroup by wlTicketId) maxWl\non wlVal.wlId = maxWl.maxWlId\ninner join JiraTicket on wlVal.wlTicketId = tId\ninner join JiraProject on tProjectId = pId\ninner join JiraEmployee logger on wlVal.wlEmployeeId = logger.eId\ninner join JiraEmployee assignee on tAssigneeId = assignee.eId\nwhere pAbbrev = 'CUS' and tStatus in ('Open', 'Reopened', 'In Progress')\norder by 'Days Ago'"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Time Usage Stats",
+					"tab_queries" :
+						[	
+							{
+								"query_name" : "Most time-consuming CUS tickets over the past week",
+								"query_value" : "select tTitle as 'Ticket Title', CAST(ROUND(1.0 * SUM(wlMinutes)/60, 2) as DECIMAL(10,2)) as 'Hours' from JiraProject inner join JiraTicket on pId = tProjectId inner join JiraTicketWorkLog on wlTicketId = tId where pAbbrev = 'CUS' and wlDate >= GETDATE() - 7 group by tTitle order by 'Hours' desc"
+							},
+							
+							{
+								"query_name" : "Hours logged on CUS tickets by employees over the last 7 days",
+								"query_value" : "select eFullName as 'Employee Name', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 0 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) 'Today', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 1 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) 'Yesterday', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 2 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '2 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 3 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '3 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 4 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '4 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 5 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '5 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 6 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '6 Days Ago' from JiraProject inner join JiraTicket on pId = tProjectId inner join JiraTicketWorkLog on wlTicketId = tId inner join JiraEmployee on eId = wlEmployeeId where pAbbrev = 'CUS' and wlDate >= getdate()-7 group by eFullName"
+							}
+						]
+				}
+			]
+	},
+
+	{	
+		"report_name" : "PS Report",
+		"report_tabs" : 
+			[
+				{
+					"tab_name" : "Time Usage Stats",
+					"tab_queries" :
+						[	
+							{
+								"query_name" : "Most time-consuming PS tickets over the past week",
+								"query_value" : "select tTitle as 'Ticket Title', CAST(ROUND(1.0 * SUM(wlMinutes)/60, 2) as DECIMAL(10,2)) as 'Hours' from JiraProject inner join JiraTicket on pId = tProjectId inner join JiraTicketWorkLog on wlTicketId = tId where pAbbrev = 'PS' and wlDate >= GETDATE() - 7 group by tTitle order by 'Hours' desc"
+							},
+							
+							{
+								"query_name" : "Hours logged on PS tickets by employees over the last 7 days",
+								"query_value" : "select eFullName as 'Employee Name', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 0 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) 'Today', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 1 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) 'Yesterday', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 2 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '2 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 3 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '3 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 4 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '4 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 5 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '5 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 6 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '6 Days Ago' from JiraProject inner join JiraTicket on pId = tProjectId inner join JiraTicketWorkLog on wlTicketId = tId inner join JiraEmployee on eId = wlEmployeeId where pAbbrev = 'PS' and wlDate >= getdate()-7 group by eFullName"
+							}
+						]
+				
+				},
+				
+				{
+					"tab_name" : "Last 2 Days",
+					"tab_queries" : 
+						[
+							{
+								"query_name" : "All work logs and comments on PS tickets from today",
+								"query_value" : "select tKey as 'Ticket Key', eFullName as 'Employee Name', tTitle as 'Ticket Title', ROUND(DATEDIFF(MINUTE, PostDate, GETDATE()) / 60.0, 2) as 'Hours Ago', PostTime as 'Min', PostComment as 'Comment' from JiraEmployee inner join (select comTicketId as 'PostTicketId', comEmployeeId as 'PostEmployeeId', comDate as 'PostDate', comComment as 'PostComment', -1 as 'PostTime' from JiraTicketComment union select wlTicketId, wlEmployeeId, wlDate, wlComment, wlMinutes from JiraTicketWorkLog) posts on eId = PostEmployeeId inner join JiraTicket on tId = postTicketId inner join JiraProject on pId = tProjectId where pAbbrev = 'PS' and DATEDIFF(DAY, PostDate, GETDATE()) = 0 order by PostDate desc"
+							},
+							
+							{
+								"query_name" : "All work logs and comments on PS tickets from yesterday",
+								"query_value" : "select tKey as 'Ticket Key', eFullName as 'Employee Name', tTitle as 'Ticket Title', ROUND(DATEDIFF(MINUTE, PostDate, GETDATE()) / 60.0, 2) as 'Hours Ago', PostTime as 'Min', PostComment as 'Comment' from JiraEmployee inner join (select comTicketId as 'PostTicketId', comEmployeeId as 'PostEmployeeId', comDate as 'PostDate', comComment as 'PostComment', -1 as 'PostTime' from JiraTicketComment union select wlTicketId, wlEmployeeId, wlDate, wlComment, wlMinutes from JiraTicketWorkLog) posts on eId = PostEmployeeId inner join JiraTicket on tId = postTicketId inner join JiraProject on pId = tProjectId where pAbbrev = 'PS' and DATEDIFF(DAY, PostDate, GETDATE()) = 1 order by PostDate desc"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Most Recent Work Logs",
+					"tab_queries" :
+						[
+							{
+								"query_name" : "Most recent work log on all open PS tickets",
+								"query_value" : "select tKey as 'Key', tTitle as 'Ticket Title', eFullName as 'Work Logger', DATEDIFF(DAY, wlVal.wlDate, GETDATE()) as 'Work Log Days Ago', wlVal.wlMinutes as 'Minutes', wlVal.wlComment as 'Work Log Comment' from JiraTicketWorkLog wlVal inner join (select wlTicketId, max(wlId) as 'maxWlId' from JiraTicketWorkLog inner join JiraTicket on tId = wlTicketId group by wlTicketId) maxWl on wlVal.wlId = maxWl.maxWlId inner join JiraTicket on wlVal.wlTicketId = tId inner join JiraProject on tProjectId = pId inner join JiraEmployee on wlVal.wlEmployeeId = eId where pAbbrev = 'PS' and tStatus in ('Open', 'Reopened', 'In Progress') order by 'Work Log Days Ago'"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Most Recent Comments",
+					"tab_queries" :
+						[							
+							{
+								"query_name" : "Most recent comment on all open PS tickets",
+								"query_value" : "select tKey as 'Key', tTitle as 'Ticket Title', eFullName as 'Commenter', DATEDIFF(DAY, comVal.comDate, GETDATE()) as 'Comment Days Ago', comVal.comComment as 'Comment' from JiraTicketComment comVal inner join (select comTicketId, max(comId) as 'maxComId' from JiraTicketComment inner join JiraTicket on tId = comTicketId group by comTicketId) maxCom on comVal.comId = maxCom.maxComId inner join JiraTicket on comVal.comTicketId = tId inner join JiraProject on tProjectId = pId inner join JiraEmployee on comVal.comEmployeeId = eId where pAbbrev = 'PS' and tStatus in ('Open', 'Reopened', 'In Progress') order by 'Comment Days Ago'"
+							}
+						]
+				}
+			]
+	},
+	
+	{	
+		"report_name" : "QUA Report",
+		"report_tabs" : 
+			[
+				{
+					"tab_name" : "Time Usage Stats",
+					"tab_queries" :
+						[	
+							{
+								"query_name" : "Most time-consuming QUA tickets over the past week",
+								"query_value" : "select tTitle as 'Ticket Title', CAST(ROUND(1.0 * SUM(wlMinutes)/60, 2) as DECIMAL(10,2)) as 'Hours' from JiraProject inner join JiraTicket on pId = tProjectId inner join JiraTicketWorkLog on wlTicketId = tId where pAbbrev = 'QUA' and wlDate >= GETDATE() - 7 group by tTitle order by 'Hours' desc"
+							},
+							
+							{
+								"query_name" : "Hours logged on QUA tickets by employees over the last 7 days",
+								"query_value" : "select eFullName as 'Employee Name', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 0 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) 'Today', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 1 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) 'Yesterday', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 2 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '2 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 3 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '3 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 4 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '4 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 5 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '5 Days Ago', SUM(CASE WHEN DATEDIFF(DAY, wlDate, GETDATE()) = 6 THEN CAST(ROUND(1.0 * wlMinutes/60, 2) as DECIMAL(10,2)) END) '6 Days Ago' from JiraProject inner join JiraTicket on pId = tProjectId inner join JiraTicketWorkLog on wlTicketId = tId inner join JiraEmployee on eId = wlEmployeeId where pAbbrev = 'QUA' and wlDate >= getdate()-7 group by eFullName"
+							}
+						]
+				
+				},
+				
+				{
+					"tab_name" : "Last 2 Days",
+					"tab_queries" : 
+						[
+							{
+								"query_name" : "All work logs and comments on QUA tickets from today",
+								"query_value" : "select tKey as 'Ticket Key', eFullName as 'Employee Name', tTitle as 'Ticket Title', ROUND(DATEDIFF(MINUTE, PostDate, GETDATE()) / 60.0, 2) as 'Hours Ago', PostTime as 'Min', PostComment as 'Comment' from JiraEmployee inner join (select comTicketId as 'PostTicketId', comEmployeeId as 'PostEmployeeId', comDate as 'PostDate', comComment as 'PostComment', -1 as 'PostTime' from JiraTicketComment union select wlTicketId, wlEmployeeId, wlDate, wlComment, wlMinutes from JiraTicketWorkLog) posts on eId = PostEmployeeId inner join JiraTicket on tId = postTicketId inner join JiraProject on pId = tProjectId where pAbbrev = 'QUA' and DATEDIFF(DAY, PostDate, GETDATE()) = 0 order by PostDate desc"
+							},
+							
+							{
+								"query_name" : "All work logs and comments on QUA tickets from yesterday",
+								"query_value" : "select tKey as 'Ticket Key', eFullName as 'Employee Name', tTitle as 'Ticket Title', ROUND(DATEDIFF(MINUTE, PostDate, GETDATE()) / 60.0, 2) as 'Hours Ago', PostTime as 'Min', PostComment as 'Comment' from JiraEmployee inner join (select comTicketId as 'PostTicketId', comEmployeeId as 'PostEmployeeId', comDate as 'PostDate', comComment as 'PostComment', -1 as 'PostTime' from JiraTicketComment union select wlTicketId, wlEmployeeId, wlDate, wlComment, wlMinutes from JiraTicketWorkLog) posts on eId = PostEmployeeId inner join JiraTicket on tId = postTicketId inner join JiraProject on pId = tProjectId where pAbbrev = 'QUA' and DATEDIFF(DAY, PostDate, GETDATE()) = 1 order by PostDate desc"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Most Recent Work Logs",
+					"tab_queries" :
+						[
+							{
+								"query_name" : "Most recent work log on all open QUA tickets",
+								"query_value" : "select tKey as 'Key', tTitle as 'Ticket Title', eFullName as 'Work Logger', DATEDIFF(DAY, wlVal.wlDate, GETDATE()) as 'Work Log Days Ago', wlVal.wlMinutes as 'Minutes', wlVal.wlComment as 'Work Log Comment' from JiraTicketWorkLog wlVal inner join (select wlTicketId, max(wlId) as 'maxWlId' from JiraTicketWorkLog inner join JiraTicket on tId = wlTicketId group by wlTicketId) maxWl on wlVal.wlId = maxWl.maxWlId inner join JiraTicket on wlVal.wlTicketId = tId inner join JiraProject on tProjectId = pId inner join JiraEmployee on wlVal.wlEmployeeId = eId where pAbbrev = 'QUA' and tStatus in ('Open', 'Reopened', 'In Progress') order by 'Work Log Days Ago'"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Most Recent Comments",
+					"tab_queries" :
+						[							
+							{
+								"query_name" : "Most recent comment on all open QUA tickets",
+								"query_value" : "select tKey as 'Key', tTitle as 'Ticket Title', eFullName as 'Commenter', DATEDIFF(DAY, comVal.comDate, GETDATE()) as 'Comment Days Ago', comVal.comComment as 'Comment' from JiraTicketComment comVal inner join (select comTicketId, max(comId) as 'maxComId' from JiraTicketComment inner join JiraTicket on tId = comTicketId group by comTicketId) maxCom on comVal.comId = maxCom.maxComId inner join JiraTicket on comVal.comTicketId = tId inner join JiraProject on tProjectId = pId inner join JiraEmployee on comVal.comEmployeeId = eId where pAbbrev = 'QUA' and tStatus in ('Open', 'Reopened', 'In Progress') order by 'Comment Days Ago'"
+							}
+						]
+				},
+				
+				{
+					"tab_name" : "Oldest Open QUA Tickets",
+					"tab_queries" :
+						[							
+							{
+								"query_name" : "Oldest open QUA tickets",
+								"query_value" : "--Oldest open QUA tickets\nselect tKey as 'Key', tTitle as 'Ticket Title', eFullName as 'Asignee Name', DATEDIFF(MONTH, tCreated, GETDATE()) as 'Months Open' from JiraTicket\ninner join JiraProject on pId = tProjectId\ninner join JiraEmployee on eId = tAssigneeId\nwhere pAbbrev = 'QUA' and tStatus in ('Open', 'Reopened', 'In Progress')\norder by tCreated"
+							}
+						]
+				}
+			]
+	},
+	
+	{	
+		"report_name" : "WebCrawler Report",
+		"report_tabs" : 
+			[
+				{
+					"tab_name" : "Recent Crawls",
+					"tab_queries" :
+						[	
+							{
+								"query_name" : "Most recent web crawls",
+								"query_value" : "select top 10 wcrId as 'Crawl Id', wcrType as 'Crawl Type', wcrStart as 'Crawl Start', ROUND(DATEDIFF(s, wcrStart, wcrEnd) / 60.0, 2) as 'Crawl Minutes', wcrPagesFound as 'Pages Found', wcrPageCrawlSuccess as 'Pages Crawled', wcrPageCrawlError as 'Page Errors', wcrComment as 'Crawl Comment' from WebCrawlRun order by wcrId desc"
+							},
+							
+							{
+								"query_name" : "Page crawls from today",
+								"query_value" : "select pcrId as 'Page Crawl Id', pcrWcrId as 'Web Crawl Id', pcrPageTitle as 'Page Title', pcrStart as 'Page Crawl Start', ROUND(DATEDIFF(ms, pcrStart, pcrEnd) / 1000.0, 2) as 'Crawl Seconds' from PageCrawlRun where DATEDIFF(DAY, pcrStart, GETDATE()) = 0 order by pcrId desc"
+							}
+						]
+				
+				}
+			]
+	}
+]

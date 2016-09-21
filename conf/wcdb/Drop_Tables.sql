@@ -1,0 +1,10 @@
+DROP TABLE JiraTicketWatcher
+DROP TABLE JiraTicketComment
+DROP TABLE JiraTicketWorkLog
+DROP TABLE JiraTicket
+DROP TABLE JiraProject
+DROP TABLE JiraEmployee
+DROP TABLE JiraCustomer
+DROP TABLE QueryAudit
+DROP TABLE PageCrawlRun
+DROP TABLE WebCrawlRun

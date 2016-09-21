@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  
+	<listener>
+		<listener-class>server.WebCrawlerServletListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<display-name>WebCrawler</display-name>
+		<servlet-name>WebCrawler</servlet-name>
+		<servlet-class>server.WebCrawlerServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	  
+	<welcome-file-list>
+		<welcome-file>jira_db.html</welcome-file>
+	</welcome-file-list>
+	  
+	<servlet-mapping>
+		<servlet-name>WebCrawler</servlet-name>
+		<url-pattern>/WebCrawler</url-pattern>
+	</servlet-mapping>
+	
+</web-app>
